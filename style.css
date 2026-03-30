@@ -1,0 +1,47 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+/* Navbar */
+header {
+  background: #ff6f91;
+  color: white;
+  padding: 15px;
+}
+
+/* Hero */
+.hero {
+  padding: 50px;
+  background: #ffe4ec;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  background: #ff6f91;
+  color: white;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+/* Products */
+.products {
+  padding: 40px;
+}
+
+.card {
+  border: 1px solid #ddd;
+  margin: 10px;
+  padding: 20px;
+  border-radius: 10px;
+  display: inline-block;
+  width: 200px;
+}
+
+/* Contact */
+.contact {
+  background: #f9f9f9;
+  padding: 40px;
+}

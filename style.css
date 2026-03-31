@@ -1,47 +1,196 @@
+/* RESET */
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  text-align: center;
+  background: #fff7fa;
 }
 
-/* Navbar */
-header {
-  background: #ff6f91;
-  color: white;
-  padding: 15px;
+/* ================= HOME ================= */
+#homeScreen {
+  height: 100vh;
+  background: url('images/homepageimage.jpeg') no-repeat center;
+  background-size: 70%;
+  background-color: #ffe4ec;
 }
 
-/* Hero */
-.hero {
-  padding: 50px;
-  background: #ffe4ec;
+.overlay {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
-button {
-  padding: 10px 20px;
+.cta-btn {
+  padding: 15px 25px;
+  background: #f48fb1;
+  border-radius: 30px;
   border: none;
-  background: #ff6f91;
   color: white;
   cursor: pointer;
-  border-radius: 5px;
+  transition: 0.3s;
 }
 
-/* Products */
-.products {
-  padding: 40px;
+.cta-btn:hover {
+  background: #ec6a9e;
 }
 
-.card {
-  border: 1px solid #ddd;
-  margin: 10px;
+/* ================= CUSTOMIZE ================= */
+#customizeScreen {
+  display: flex;
+  height: 100vh;
+}
+
+/* SIDEBAR */
+.sidebar {
+  width: 90px;
+  background: linear-gradient(180deg, #ffe4ec, #fff);
+  box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 10px;
+}
+
+.menu-item {
+  margin: 15px 0;
+  padding: 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.menu-item:hover {
+  background: #f8c8dc;
+}
+
+.menu-item.active {
+  background: #f48fb1;
+  color: white;
+}
+
+/* CONTENT */
+.content {
+  flex: 1;
   padding: 20px;
-  border-radius: 10px;
-  display: inline-block;
-  width: 200px;
+  overflow-y: auto;
 }
 
-/* Contact */
-.contact {
-  background: #f9f9f9;
-  padding: 40px;
+/* GRID */
+#toys, #designView {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 15px;
+  justify-items: center;
+}
+
+/* CARDS */
+.card {
+  width: 140px;
+  height: 170px;
+  background: #fff;
+  border-radius: 15px;
+  padding: 10px;
+  text-align: center;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+  cursor: pointer;
+  overflow: hidden;
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+/* IMAGE FIX */
+.card img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 10px;
+  transition: 0.3s;
+}
+
+.card:hover img {
+  transform: scale(1.1);
+}
+
+/* SELECTED */
+.card.selected {
+  border: 2px solid #f48fb1;
+}
+
+/* NAME INPUT */
+#nameSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#nameSection input {
+  padding: 12px;
+  width: 250px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
+
+/* ================= BOTTOM BAR ================= */
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 90px;
+  width: calc(100% - 90px);
+  background: white;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #eee;
+}
+
+.bottom-bar button {
+  padding: 10px 20px;
+  border-radius: 20px;
+  background: #f48fb1;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+/* ================= ORDER ================= */
+#orderScreen {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 100vh;
+}
+
+#orderScreen h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+}
+
+#orderScreen select {
+  margin: 10px;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+/* ================= ANIMATION ================= */
+.section {
+  animation: slide 0.4s ease;
+}
+
+@keyframes slide {
+  from {
+    opacity: 0;
+    transform: translateX(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }

@@ -3,53 +3,182 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shape & Shades</title>
-
-  <!-- CSS link -->
+  <title>ShaPe & ShaDe</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Navbar -->
-  <header>
-    <h1>Shape & Shades</h1>
-  </header>
+<!-- ================= HOME ================= -->
+<section id="homeScreen">
+  <div class="overlay">
+    <h1>ShaPe & ShaDe</h1>
+    <button class="cta-btn" onclick="openCustomize()">Create Your DIY Kit 🎨</button>
+  </div>
+</section>
 
-  <!-- Hero Section -->
-  <section class="hero">
-    <h2>Beautiful Resin Art & Homemade Chocolates</h2>
-    <p>Perfect gifts for every occasion 🎁</p>
-    <button>Order Now</button>
-  </section>
+<!-- ================= CUSTOMIZE ================= -->
+<section id="customizeScreen" style="display:none;">
 
-  <!-- Products -->
-  <section class="products">
-    <h2>Our Products</h2>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div onclick="showSection('toys', this)" class="menu-item active">🧸 Toys</div>
+    <div onclick="showSection('nameSection', this)" class="menu-item">✍️ Name</div>
+  </div>
 
-    <div class="card">
-      <h3>Resin Art</h3>
-      <p>Unique handmade designs</p>
+  <!-- Content -->
+  <div class="content">
+
+    <!-- TOYS -->
+    <div id="toys" class="section">
+      <div class="card" onclick="selectToy(this,'Flowers')">
+        <img src="images/flower.jpeg">
+        <p>Flowers</p>
+      </div>
+
+      <div class="card" onclick="selectToy(this,'Train')">
+        <img src="images/toy2.jpg">
+        <p>Train</p>
+      </div>
+
+      <div class="card" onclick="selectToy(this,'Train Engine')">
+        <img src="images/trainengine.jpeg">
+        <p>Train Engine</p>
+      </div>
+      <div class="card" onclick="selectToy(this,'Bus')">
+        <img src="images/toy3.jpg">
+        <p>Bus</p>
+      </div>
+      <div class="card" onclick="selectToy(this,'Bike')">
+        <img src="images/toy3.jpg">
+        <p>Bike</p>
+      </div>
+      <div class="card" onclick="selectToy(this,'Delivery Truck')">
+        <img src="images/toy3.jpg">
+        <p>Delivery Truck</p>
+      </div>
+      <div class="card" onclick="selectToy(this,'Cars')">
+        <img src="images/cars.jpeg">
+        <p>Cars</p>
+      </div>
+      <div class="card" onclick="selectToy(this,'Dinosaur')">
+        <img src="images/toy3.jpg">
+        <p>Dinosaur</p>
+      </div>
+      <div class="card" onclick="selectToy(this,'Butterflies')">
+        <img src="images/toy3.jpg">
+        <p>Butterflies</p>
+      </div>
+      <div class="card" onclick="selectToy(this,'Houses')">
+        <img src="images/toy3.jpg">
+        <p>Houses</p>
+      </div>
+      <div class="card" onclick="selectToy(this,'Huts')">
+        <img src="images/toy3.jpg">
+        <p>Huts</p>
+      </div>
+      <div class="card" onclick="selectToy(this,'Easter Eggs')">
+        <img src="images/toy3.jpg">
+        <p>Easter Eggs</p>
+      </div>      
+      <div class="card" onclick="selectToy(this,'Aeroplane')">
+        <img src="images/toy3.jpg">
+        <p>Aeroplane</p>
+      </div>      
+      <div class="card" onclick="selectToy(this,'Astronaut')">
+        <img src="images/toy3.jpg">
+        <p>Astronaut</p>
+      </div>
+      <div class="card" onclick="selectToy(this,'Aircraft')">
+        <img src="images/toy3.jpg">
+        <p>Aircraft</p>
+      </div>
+      <div class="card" onclick="selectToy(this,'Bear')">
+        <img src="images/toy3.jpg">
+        <p>Bear</p>
+      </div>
+      <div class="card" onclick="selectToy(this,'Lion')">
+        <img src="images/toy3.jpg">
+        <p>Lion</p>
+      </div>
+      <div class="card" onclick="selectToy(this,'Pig')">
+        <img src="images/toy3.jpg">
+        <p>Pig</p>
+      </div>
+      <div class="card" onclick="selectToy(this,'Frogs')">
+        <img src="images/toy3.jpg">
+        <p>Frogs</p>
+      </div>
+      <div class="card" onclick="selectToy(this,'Squirrel')">
+        <img src="images/toy3.jpg">
+        <p>Squirrel</p>
+      </div>
+      <div class="card" onclick="selectToy(this,'Porcupine')">
+        <img src="images/toy3.jpg">
+        <p>Porcupine</p>
+      </div>
+      <div class="card" onclick="selectToy(this,'fox')">
+        <img src="images/toy3.jpg">
+        <p>fox</p>
+      </div>
+      <div class="card" onclick="selectToy(this,'owl')">
+        <img src="images/toy3.jpg">
+        <p>owl</p>
+      </div>
+      <div class="card" onclick="selectToy(this,'Tortoise')">
+        <img src="images/toy3.jpg">
+        <p>Tortoise</p>
+      </div><div class="card" onclick="selectToy(this,'Sea shells (small size)')">
+        <img src="images/toy3.jpg">
+        <p>Sea shells (small size)</p>
+      </div>
+  </div> <!-- CLOSE TOYS -->  
+    <!-- NAME -->
+    <div id="nameSection" class="section" style="display:none;">
+      <input type="text" id="customName" placeholder="Enter Custom Name">
     </div>
 
-    <div class="card">
-      <h3>Chocolates</h3>
-      <p>Delicious homemade treats</p>
-    </div>
+  </div>
+  <!-- DESIGN VIEW -->
+<div id="designView" class="section" style="display:none;"></div>
 
-    <div class="card">
-      <h3>Return Gifts</h3>
-      <p>Perfect for kids parties</p>
-    </div>
 
-  </section>
+  <!-- BOTTOM BAR -->
+  <div class="bottom-bar">
+    <span id="selectedToy">No Toy Selected</span>
+    <button onclick="goToOrder()">Order →</button>
+  </div>
 
-  <!-- Contact -->
-  <section class="contact">
-    <h2>Contact Us</h2>
-    <p>Order via WhatsApp</p>
-    <button id="whatsappBtn">Chat on WhatsApp</button>
-  </section>
+</section>
 
-  <script src="script.js"></script>
+<!-- ================= ORDER ================= -->
+<section id="orderScreen" style="display:none;">
+  <h2>Your Order</h2>
+
+  <p id="finalToy"></p>
+  <p id="finalName"></p>
+
+  <select id="magnet">
+    <option>Magnetic (+₹20)</option>
+    <option>Non-Magnetic</option>
+  </select>
+
+  <select id="kit">
+    <option>With Kit (+₹50)</option>
+    <option>Without Kit</option>
+  </select>
+
+  <select id="orderType">
+  <option value="shapes">Only Shapes</option>
+  <option value="kit">Kit (Colors + Brush)</option>
+  <option value="name">Custom Name Kit</option>
+  <option value="magnet">Magnet</option>
+</select>
+
+  <h3 id="price">Total: ₹199</h3>
+
+  <button onclick="sendOrder()">Place Order</button>
+</section>
+
+<script src="script.js"></script>
 </body>
 </html>

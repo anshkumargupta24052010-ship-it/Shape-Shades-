@@ -82,19 +82,27 @@ function updateBottom() {
 
   document.getElementById("selectedToy").innerText = text;
 }
-// ================= SECTION SWITCH =================
+// ================= SECTION SWITCH FIX =================
 function showSection(sectionId, element) {
 
-  // hide all sections
+  // hide all
   document.getElementById("toys").style.display = "none";
   document.getElementById("nameSection").style.display = "none";
   document.getElementById("designView").style.display = "none";
 
-  // show selected
-  document.getElementById(sectionId).style.display = "flex";
+  // show सही तरीके से
+  if (sectionId === "toys") {
+    document.getElementById("toys").style.display = "grid";
+  } 
+  else if (sectionId === "nameSection") {
+    document.getElementById("nameSection").style.display = "flex";
+  }
 
   // active highlight
   let items = document.querySelectorAll(".menu-item");
   items.forEach(i => i.classList.remove("active"));
   element.classList.add("active");
+}
+function showToys() {
+  showSection('toys', document.querySelector('.menu-item'));
 }

@@ -38,6 +38,7 @@ function selectToy(card, toy) {
 
   showDesigns(toy);
   updateBottom();
+  calculatePrice();
 }
 
 // ================= SHOW DESIGNS =================
@@ -106,3 +107,38 @@ function showSection(sectionId, element) {
 function showToys() {
   showSection('toys', document.querySelector('.menu-item'));
 }
+// ================= PRICE SYSTEM =================
+function calculatePrice() {
+  let count = selectedToys.length;
+  let type = document.getElementById("orderType").value;
+
+  let price = 0;
+
+  if (type === "shapes") {
+    if (count == 1) price = 39;
+    else if (count == 2) price = 79;
+    else if (count == 3) price = 109;
+    else if (count == 4) price = 139;
+    else if (count >= 6) price = 169;
+  }
+
+  else if (type === "kit") {
+    if (count == 1) price = 89;
+    else if (count == 2) price = 119;
+    else if (count == 3) price = 169;
+    else if (count == 4) price = 209;
+    else if (count >= 6) price = 269;
+  }
+
+  else if (type === "name") {
+    let name = document.getElementById("customName").value;
+    price = name.length * 20 + 259;
+  }
+
+  else if (type === "magnet") {
+    price = 50;
+  }
+
+  document.getElementById("price").innerText = "Total: ₹" + price;
+}
+document.getElementById("orderType").addEventListener("change", calculatePrice);

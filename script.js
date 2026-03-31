@@ -158,7 +158,7 @@ Name: ${name}
 ${price}`;
 
   // ✅ CORRECT FORMAT (no +, no space)
-  let phone = "918109944185"; // apna number
+  let phone = "919340489691"; // apna number
 
   let url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 

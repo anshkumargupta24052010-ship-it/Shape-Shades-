@@ -9,7 +9,7 @@ function goToOrder() {
   document.getElementById("orderScreen").style.display = "block";
 
   document.getElementById("finalToy").innerText =
-    "Toys: " + selectedToys.join(", ");
+    "Toy: " + (selectedToys[0] || "None");
 
   document.getElementById("finalName").innerText =
     "Name: " + document.getElementById("customName").value;
@@ -28,13 +28,15 @@ const designData = {
 // ================= TOY SELECT =================
 function selectToy(card, toy) {
 
-  if (selectedToys.includes(toy)) {
-    selectedToys = selectedToys.filter(t => t !== toy);
-    card.classList.remove("selected");
-  } else {
-    selectedToys.push(toy);
-    card.classList.add("selected");
-  }
+  // remove old selection
+  document.querySelectorAll("#toys .card")
+    .forEach(c => c.classList.remove("selected"));
+
+  selectedToys = [toy];
+  card.classList.add("selected");
+
+  // reset designs
+  selectedDesigns = [];
 
   showDesigns(toy);
   updateBottom();
@@ -46,14 +48,14 @@ function showDesigns(toy) {
   let designView = document.getElementById("designView");
   let designs = designData[toy] || [];
 
-  // 🔥 AGAR DESIGN NAHI HAI → HIDE KAR DO
+  selectedDesigns = [];
+
   if (designs.length === 0) {
     designView.style.display = "none";
     designView.innerHTML = "";
     return;
   }
 
-  // warna show karo
   designView.style.display = "grid";
   designView.innerHTML = "";
 
@@ -62,43 +64,35 @@ function showDesigns(toy) {
     div.className = "card";
     div.innerText = d;
 
-    div.onclick = () => toggleDesign(div, d);
+    div.onclick = () => {
+      document.querySelectorAll("#designView .card")
+        .forEach(c => c.classList.remove("selected"));
+
+      selectedDesigns = [d];
+      div.classList.add("selected");
+
+      updateBottom();
+    };
 
     designView.appendChild(div);
   });
 }
-// ================= DESIGN SELECT =================
-function toggleDesign(card, design) {
-  if (selectedDesigns.includes(design)) {
-    selectedDesigns = selectedDesigns.filter(d => d !== design);
-    card.classList.remove("selected");
-  } else {
-    selectedDesigns.push(design);
-    card.classList.add("selected");
-  }
-
-  updateBottom();
-}
 
 // ================= BOTTOM BAR =================
 function updateBottom() {
-  let text =
-    "Selected: " +
-    selectedToys.join(", ") +
-    " | " +
-    selectedDesigns.join(", ");
+  let text = "Toy: " + (selectedToys[0] || "None") +
+             " | Design: " + (selectedDesigns[0] || "None");
 
   document.getElementById("selectedToy").innerText = text;
 }
-// ================= SECTION SWITCH FIX =================
+
+// ================= SECTION SWITCH =================
 function showSection(sectionId, element) {
 
-  // hide all
   document.getElementById("toys").style.display = "none";
   document.getElementById("nameSection").style.display = "none";
   document.getElementById("designView").style.display = "none";
 
-  // show सही तरीके से
   if (sectionId === "toys") {
     document.getElementById("toys").style.display = "grid";
   } 
@@ -106,14 +100,11 @@ function showSection(sectionId, element) {
     document.getElementById("nameSection").style.display = "flex";
   }
 
-  // active highlight
   let items = document.querySelectorAll(".menu-item");
   items.forEach(i => i.classList.remove("active"));
   element.classList.add("active");
 }
-function showToys() {
-  showSection('toys', document.querySelector('.menu-item'));
-}
+
 // ================= PRICE SYSTEM =================
 function calculatePrice() {
   let count = selectedToys.length;
@@ -126,7 +117,7 @@ function calculatePrice() {
     else if (count == 2) price = 79;
     else if (count == 3) price = 109;
     else if (count == 4) price = 139;
-    else if (count >= 6) price = 169;
+    else if (count >= 5) price = 169;
   }
 
   else if (type === "kit") {
@@ -134,7 +125,7 @@ function calculatePrice() {
     else if (count == 2) price = 119;
     else if (count == 3) price = 169;
     else if (count == 4) price = 209;
-    else if (count >= 6) price = 269;
+    else if (count >= 5) price = 269;
   }
 
   else if (type === "name") {
@@ -148,4 +139,27 @@ function calculatePrice() {
 
   document.getElementById("price").innerText = "Total: ₹" + price;
 }
+
 document.getElementById("orderType").addEventListener("change", calculatePrice);
+
+// ================= WHATSAPP ORDER =================
+function sendOrder() {
+
+  let toy = selectedToys[0] || "None";
+  let design = selectedDesigns[0] || "None";
+  let name = document.getElementById("customName").value || "None";
+  let price = document.getElementById("price").innerText;
+
+  let message = 
+`🛒 New Order
+Toy: ${toy}
+Design: ${design}
+Name: ${name}
+${price}`;
+
+  let phone = "918109944185"; // 🔥 apna number daal
+
+  let url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+
+  window.open(url, "_blank");
+}

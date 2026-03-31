@@ -44,10 +44,18 @@ function selectToy(card, toy) {
 // ================= SHOW DESIGNS =================
 function showDesigns(toy) {
   let designView = document.getElementById("designView");
+  let designs = designData[toy] || [];
+
+  // 🔥 AGAR DESIGN NAHI HAI → HIDE KAR DO
+  if (designs.length === 0) {
+    designView.style.display = "none";
+    designView.innerHTML = "";
+    return;
+  }
+
+  // warna show karo
   designView.style.display = "grid";
   designView.innerHTML = "";
-
-  let designs = designData[toy] || [];
 
   designs.forEach(d => {
     let div = document.createElement("div");
@@ -59,7 +67,6 @@ function showDesigns(toy) {
     designView.appendChild(div);
   });
 }
-
 // ================= DESIGN SELECT =================
 function toggleDesign(card, design) {
   if (selectedDesigns.includes(design)) {

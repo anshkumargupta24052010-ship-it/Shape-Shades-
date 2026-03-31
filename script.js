@@ -157,9 +157,11 @@ Design: ${design}
 Name: ${name}
 ${price}`;
 
-  let phone = "918109944185"; // 🔥 apna number daal
+  // ✅ CORRECT FORMAT (no +, no space)
+  let phone = "918109944185"; // apna number
 
   let url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
 
-  window.open(url, "_blank");
+  // 🔥 IMPORTANT FIX FOR MOBILE
+  window.location.href = url;
 }

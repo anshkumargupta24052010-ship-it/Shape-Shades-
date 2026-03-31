@@ -9,8 +9,33 @@ body {
 #homeScreen {
   height: 100vh;
   background: url('images/homepageimage.jpeg') no-repeat center;
-  background-size: 70%;
+  background-size: cover;
   background-color: #ffe4ec;
+}
+.overlay h1 {
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+.tagline {
+  font-size: 16px;
+  margin-bottom: 20px;
+  color: #fff;
+  opacity: 0.9;
+}
+
+/* 🔥 glass effect */
+.overlay {
+  backdrop-filter: blur(5px);
+}
+
+/* button animation */
+.cta-btn {
+  transition: 0.3s;
+}
+
+.cta-btn:hover {
+  transform: scale(1.05);
 }
 
 .overlay {

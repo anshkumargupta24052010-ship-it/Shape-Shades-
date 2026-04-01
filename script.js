@@ -1,10 +1,6 @@
 // ================= STATE =================
-let selectedToys = [];
-let selectedDesigns = [];
-let selectedToy = null;
-let selectedPrice = 199;
 let cart = [];
-let selectedImage = "";
+let selectedPrice = 199;
 
 // ================= SCREEN NAV =================
 function openCustomize() {
@@ -13,64 +9,80 @@ function openCustomize() {
 }
 
 function goHome() {
+  closePreview();
   document.getElementById("customizeScreen").style.display = "none";
   document.getElementById("orderScreen").style.display = "none";
   document.getElementById("cartScreen").style.display = "none";
   document.getElementById("homeScreen").style.display = "block";
 }
 
-// ================= PREVIEW FIX =================
+// ================= TOY SELECT (MULTI CART) =================
 function selectToy(card, toy) {
-  selectedToy = toy;
+  const img = card.querySelector("img")?.src || "";
 
-  document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
-  if (card) card.classList.add("selected");
+  const index = cart.findIndex(i => i.name === toy);
 
-  const imgEl = card ? card.querySelector("img") : null;
-  selectedImage = card?.querySelector("img")?.getAttribute("src") || ""; "";
+  if (index !== -1) {
+    cart.splice(index, 1);
+    card.classList.remove("selected");
+  } else {
+    cart.push({
+      name: toy,
+      price: selectedPrice,
+      img: img
+    });
+    card.classList.add("selected");
+  }
 
+  updateCartCount();
+  updatePreview(toy, img);
+}
+
+// ================= PREVIEW =================
+function updatePreview(name, img) {
   const panel = document.getElementById("previewPanel");
   const title = document.getElementById("previewTitle");
   const text = document.getElementById("previewText");
-  const img = document.getElementById("previewImg");
+  const image = document.getElementById("previewImg");
 
-  if (title) title.innerText = toy;
-  if (text) text.innerText = "Selected: " + toy;
-  if (img && imgEl) img.src = imgEl.src;
+  if (!panel) return;
 
-  if (panel) panel.classList.add("active");
-  function closePreview() {
-  document.getElementById("previewPanel").classList.remove("active");
+  panel.classList.add("active");
+
+  if (title) title.innerText = name;
+  if (text) text.innerText = "Selected: " + name;
+  if (image) image.src = img;
 }
+
+// ================= CLOSE PREVIEW =================
+function closePreview() {
+  document.getElementById("previewPanel")?.classList.remove("active");
 }
 
-// ================= ADD TO CART =================
-function addToCart() {
-  if (!selectedToy) {
-    alert("Please select a toy first!");
-    return;
-  }
-
-  cart.push({
-    name: selectedToy,
-    price: selectedPrice,
-    img: selectedImage || "images/placeholder.png"
-  });
-
-  updateCartCount();
-  alert("Added to Cart 🛒");
-}
 // ================= CART COUNT =================
 function updateCartCount() {
   const el = document.getElementById("cartCount");
   if (el) el.innerText = cart.length;
 }
 
+// ================= ADDITIONAL ADD BUTTON (OPTIONAL) =================
+function addToCart() {
+  updateCartCount();
+  alert("Added to Cart 🛒");
+}
+
 // ================= SHOW CART =================
 function showCart() {
+  closePreview();
+
   document.getElementById("customizeScreen").style.display = "none";
   document.getElementById("cartScreen").style.display = "block";
 
+  renderCart();
+}
+
+// ================= RENDER CART =================
+function renderCart() {
   const box = document.getElementById("cartItems");
   box.innerHTML = "";
 
@@ -82,96 +94,51 @@ function showCart() {
     return;
   }
 
-  cart.forEach((item) => {
+  cart.forEach(item => {
     total += item.price;
 
     box.innerHTML += `
-      <div class="cart-item" style="display:flex;align-items:center;gap:10px;margin:10px 0;">
-        <img src="${item.img}" 
-             style="width:60px;height:60px;border-radius:10px;object-fit:cover;">
-        
-        <div style="flex:1;">
-          <div>${item.name}</div>
-        </div>
-
-        <div style="font-weight:bold;">
-          ₹${item.price}
-        </div>
+      <div class="cart-item">
+        <img src="${item.img}" style="width:60px;height:60px;object-fit:cover;border-radius:10px;">
+        <div style="flex:1;">${item.name}</div>
+        <div>₹${item.price}</div>
       </div>
     `;
   });
 
   document.getElementById("cartTotal").innerText = "Total: ₹" + total;
 }
+
 // ================= BUY NOW =================
 function buyNow() {
-  if (!selectedToy) {
-    alert("Select a toy first!");
+  if (cart.length === 0) {
+    alert("Select items first!");
     return;
   }
 
-  document.getElementById("orderScreen").style.display = "block";
   document.getElementById("customizeScreen").style.display = "none";
-}
-
-// ================= ORDER SCREEN =================
-function goToOrder() {
-  document.getElementById("cartScreen").style.display = "none";
   document.getElementById("orderScreen").style.display = "block";
 
-  document.getElementById("finalToy").innerText =
-    "Toy: " + (selectedToy || "Multiple Items");
+  closePreview();
 }
 
-// ================= PRICE UPDATE =================
-function calculatePrice() {
-  let type = document.getElementById("orderType").value;
-  let count = selectedToys.length || 1;
-  let price = 199;
-
-  if (type === "kit") price = 249;
-  if (type === "name") price = 299;
-  if (type === "magnet") price = 149;
-
-  selectedPrice = price;
-
-  document.getElementById("price").innerText = "Total: ₹" + price;
-}
-
-document.addEventListener("change", function (e) {
-  if (e.target.id === "orderType") {
-    calculatePrice();
-  }
-});
-
-// ================= ORDER PLACE =================
+// ================= ORDER TO WHATSAPP =================
 function sendOrder() {
-  let name = selectedToy || "Cart Order";
-  let type = document.getElementById("orderType").value;
+  let msg = "🛒 NEW ORDER\n\n";
 
-  let msg = `
-🛒 NEW ORDER
+  let total = 0;
 
-Toy: ${name}
-Type: ${type}
-Total: ₹${selectedPrice}
-`;
+  cart.forEach(item => {
+    msg += `${item.name} - ₹${item.price}\n`;
+    total += item.price;
+  });
 
-  let phone = "917869748842"; // change this
+  msg += `\nTotal: ₹${total}`;
+
+  let phone = "917869748842";
 
   window.open(
     "https://wa.me/" + phone + "?text=" + encodeURIComponent(msg),
     "_blank"
   );
-}
-
-// ================= DESIGN (safe fallback) =================
-function toggleDesign(card, design) {
-  if (selectedDesigns.includes(design)) {
-    selectedDesigns = selectedDesigns.filter(d => d !== design);
-    card.classList.remove("selected");
-  } else {
-    selectedDesigns.push(design);
-    card.classList.add("selected");
-  }
 }

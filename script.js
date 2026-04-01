@@ -182,7 +182,7 @@ function sendOrder() {
   msg += `\n\nTotal: ₹${calculatePrice()}`;
 
   window.open(
-    "https://wa.me/918109944185?text=" + encodeURIComponent(msg),
+    "https://wa.me/919340489691?text=" + encodeURIComponent(msg),
     "_blank"
   );
 }

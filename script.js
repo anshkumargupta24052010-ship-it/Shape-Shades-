@@ -2,21 +2,46 @@
 let cart = [];
 let selectedPrice = 199;
 
-// ================= SCREEN NAV =================
+// ================= SCREEN CONTROL =================
+function showScreen(screenId) {
+  const screens = ["homeScreen", "customizeScreen", "cartScreen", "orderScreen"];
+
+  screens.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = "none";
+  });
+
+  document.getElementById(screenId).style.display =
+    screenId === "customizeScreen" ? "flex" : "block";
+
+  closePreview();
+}
+
+// ================= HOME =================
 function openCustomize() {
-  document.getElementById("homeScreen").style.display = "none";
-  document.getElementById("customizeScreen").style.display = "flex";
+  showScreen("customizeScreen");
 }
 
 function goHome() {
-  closePreview();
-  document.getElementById("customizeScreen").style.display = "none";
-  document.getElementById("orderScreen").style.display = "none";
-  document.getElementById("cartScreen").style.display = "none";
-  document.getElementById("homeScreen").style.display = "block";
+  showScreen("homeScreen");
 }
 
-// ================= TOY SELECT (MULTI CART) =================
+// ================= BACK BUTTON (NEW) =================
+function goBack() {
+  if (document.getElementById("orderScreen").style.display === "block") {
+    showScreen("cartScreen");
+    return;
+  }
+
+  if (document.getElementById("cartScreen").style.display === "block") {
+    showScreen("customizeScreen");
+    return;
+  }
+
+  showScreen("homeScreen");
+}
+
+// ================= TOY SELECT =================
 function selectToy(card, toy) {
   const img = card.querySelector("img")?.src || "";
 
@@ -26,11 +51,7 @@ function selectToy(card, toy) {
     cart.splice(index, 1);
     card.classList.remove("selected");
   } else {
-    cart.push({
-      name: toy,
-      price: selectedPrice,
-      img: img
-    });
+    cart.push({ name: toy, price: selectedPrice, img });
     card.classList.add("selected");
   }
 
@@ -41,47 +62,37 @@ function selectToy(card, toy) {
 // ================= PREVIEW =================
 function updatePreview(name, img) {
   const panel = document.getElementById("previewPanel");
-  const title = document.getElementById("previewTitle");
-  const text = document.getElementById("previewText");
-  const image = document.getElementById("previewImg");
 
-  if (!panel) return;
+  document.getElementById("previewTitle").innerText = name;
+  document.getElementById("previewText").innerText = "Selected: " + name;
+  document.getElementById("previewImg").src = img;
 
   panel.classList.add("active");
-
-  if (title) title.innerText = name;
-  if (text) text.innerText = "Selected: " + name;
-  if (image) image.src = img;
 }
 
-// ================= CLOSE PREVIEW =================
 function closePreview() {
   document.getElementById("previewPanel")?.classList.remove("active");
 }
 
-// ================= CART COUNT =================
+// ================= CART =================
 function updateCartCount() {
-  const el = document.getElementById("cartCount");
-  if (el) el.innerText = cart.length;
+  document.getElementById("cartCount").innerText = cart.length;
 }
 
-// ================= ADDITIONAL ADD BUTTON (OPTIONAL) =================
 function addToCart() {
-  updateCartCount();
+  if (cart.length === 0) {
+    alert("Select a toy first!");
+    return;
+  }
   alert("Added to Cart 🛒");
 }
 
-// ================= SHOW CART =================
+// ================= CART SCREEN =================
 function showCart() {
-  closePreview();
-
-  document.getElementById("customizeScreen").style.display = "none";
-  document.getElementById("cartScreen").style.display = "block";
-
+  showScreen("cartScreen");
   renderCart();
 }
 
-// ================= RENDER CART =================
 function renderCart() {
   const box = document.getElementById("cartItems");
   box.innerHTML = "";
@@ -99,8 +110,8 @@ function renderCart() {
 
     box.innerHTML += `
       <div class="cart-item">
-        <img src="${item.img}" style="width:60px;height:60px;object-fit:cover;border-radius:10px;">
-        <div style="flex:1;">${item.name}</div>
+        <img src="${item.img}" style="width:60px;height:60px;border-radius:10px;">
+        <div style="flex:1">${item.name}</div>
         <div>₹${item.price}</div>
       </div>
     `;
@@ -112,20 +123,25 @@ function renderCart() {
 // ================= BUY NOW =================
 function buyNow() {
   if (cart.length === 0) {
-    alert("Select items first!");
+    alert("Cart is empty!");
     return;
   }
 
-  document.getElementById("customizeScreen").style.display = "none";
-  document.getElementById("orderScreen").style.display = "block";
-
-  closePreview();
+  showScreen("orderScreen");
 }
 
-// ================= ORDER TO WHATSAPP =================
+// ================= CHECKOUT FIX =================
+function goToOrder() {
+  if (cart.length === 0) {
+    alert("Cart empty!");
+    return;
+  }
+  showScreen("orderScreen");
+}
+
+// ================= ORDER =================
 function sendOrder() {
   let msg = "🛒 NEW ORDER\n\n";
-
   let total = 0;
 
   cart.forEach(item => {
@@ -135,10 +151,30 @@ function sendOrder() {
 
   msg += `\nTotal: ₹${total}`;
 
-  let phone = "919340489691";
-
   window.open(
-    "https://wa.me/" + phone + "?text=" + encodeURIComponent(msg),
+    "https://wa.me/918109944185?text=" + encodeURIComponent(msg),
     "_blank"
   );
+}
+
+// ================= NAME FIX (CLICK ISSUE SOLUTION) =================
+// NOTE: name section now works ONLY if you call showSection properly
+function showSection(section) {
+  const toys = document.getElementById("toys");
+  const name = document.getElementById("nameSection");
+
+  if (section === "toys") {
+    toys.style.display = "grid";
+    name.style.display = "none";
+  }
+
+  if (section === "nameSection") {
+    toys.style.display = "none";
+    name.style.display = "flex";
+  }
+}
+
+// ================= CONTINUE SHOPPING =================
+function continueShopping() {
+  showScreen("customizeScreen");
 }

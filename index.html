@@ -11,7 +11,7 @@
 <!-- ================= HOME ================= -->
 <section id="homeScreen">
   <div class="overlay">
-    
+
     <h1 class="main-heading">ShaPe & ShaDe</h1>
 
     <p class="tagline">
@@ -29,17 +29,20 @@
 <!-- ================= CUSTOMIZE ================= -->
 <section id="customizeScreen" style="display:none;">
 
-  <!-- Sidebar -->
+  <!-- SIDEBAR -->
   <div class="sidebar">
     <div onclick="showSection('toys', this)" class="menu-item active">🧸 Toys</div>
     <div onclick="showSection('nameSection', this)" class="menu-item">✍️ Name</div>
+    <div onclick="showCart()" class="menu-item">
+      🛒 Cart (<span id="cartCount">0</span>)
+    </div>
   </div>
 
-  <!-- Content -->
+  <!-- CONTENT -->
   <div class="content">
 
-    <!-- TOYS -->
-    <div id="toys" class="section">
+    <!-- TOYS GRID -->
+     <div id="toys" class="section">
       <div class="card" onclick="selectToy(this,'Flowers')">
         <img src="images/flower.jpeg">
         <p>Flowers</p>
@@ -140,13 +143,62 @@
       </div><div class="card" onclick="selectToy(this,'Sea shells (small size)')">
         <img src="images/toy3.jpg">
         <p>Sea shells (small size)</p>
-      </div>
-      <!-- PREVIEW PANEL -->
+    </div>
+
+    <!-- NAME SECTION -->
+    <div id="nameSection" class="section" style="display:none;">
+      <input type="text" id="customName" placeholder="Enter Custom Name">
+    </div>
+
+  </div>
+
+  <!-- DESIGN VIEW -->
+  <div id="designView" class="section" style="display:none;"></div>
+
+  <!-- BOTTOM BAR -->
+  <div class="bottom-bar">
+    <span id="selectedToy">No Toy Selected</span>
+    <button onclick="goToOrder()">Order →</button>
+  </div>
+
+</section>
+
+<!-- ================= ORDER SCREEN ================= -->
+<section id="orderScreen" style="display:none;">
+  <h2>Your Order</h2>
+
+  <p id="finalToy"></p>
+  <p id="finalName"></p>
+
+  <select id="orderType">
+    <option value="shapes">Only Shapes</option>
+    <option value="kit">Kit (Colors + Brush)</option>
+    <option value="name">Custom Name Kit</option>
+    <option value="magnet">Magnet</option>
+  </select>
+
+  <h3 id="price">Total: ₹199</h3>
+
+  <button onclick="sendOrder()">Place Order</button>
+</section>
+
+<!-- ================= CART SCREEN (OUTSIDE) ================= -->
+<section id="cartScreen" style="display:none;">
+  <h2>Your Cart 🛒</h2>
+
+  <div id="cartItems"></div>
+
+  <h3 id="cartTotal">Total: ₹0</h3>
+
+  <button onclick="goToOrder()">Checkout</button>
+</section>
+
+<!-- ================= PREVIEW PANEL (FIXED OVERLAY) ================= -->
 <div id="previewPanel" class="preview-panel">
-  
+
   <div class="preview-content">
-    
-    <img id="previewImg" src="" alt="Toy Image">
+
+    <img id="previewImg" src="" alt="Toy">
 
     <h3 id="previewTitle">Select a Toy</h3>
 
@@ -158,53 +210,6 @@
   </div>
 
 </div>
-  </div> <!-- CLOSE TOYS -->  
-    <!-- NAME -->
-    <div id="nameSection" class="section" style="display:none;">
-      <input type="text" id="customName" placeholder="Enter Custom Name">
-    </div>
-
-  </div>
-  <!-- DESIGN VIEW -->
-<div id="designView" class="section" style="display:none;"></div>
-
-
-  <!-- BOTTOM BAR -->
-  <div class="bottom-bar">
-    <span id="selectedToy">No Toy Selected</span>
-    <button onclick="goToOrder()">Order →</button>
-  </div>
-
-</section>
-
-<!-- ================= ORDER ================= -->
-<section id="orderScreen" style="display:none;">
-  <h2>Your Order</h2>
-
-  <p id="finalToy"></p>
-  <p id="finalName"></p>
-
-  <select id="magnet">
-    <option>Magnetic (+₹20)</option>
-    <option>Non-Magnetic</option>
-  </select>
-
-  <select id="kit">
-    <option>With Kit (+₹50)</option>
-    <option>Without Kit</option>
-  </select>
-
-  <select id="orderType">
-  <option value="shapes">Only Shapes</option>
-  <option value="kit">Kit (Colors + Brush)</option>
-  <option value="name">Custom Name Kit</option>
-  <option value="magnet">Magnet</option>
-</select>
-
-  <h3 id="price">Total: ₹199</h3>
-
-  <button onclick="sendOrder()">Place Order</button>
-</section>
 
 <script src="script.js"></script>
 </body>

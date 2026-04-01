@@ -135,7 +135,7 @@ function sendOrder() {
 
   msg += `\nTotal: ₹${total}`;
 
-  let phone = "917869748842";
+  let phone = "919340489691";
 
   window.open(
     "https://wa.me/" + phone + "?text=" + encodeURIComponent(msg),

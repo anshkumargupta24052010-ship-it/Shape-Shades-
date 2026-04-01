@@ -1,6 +1,19 @@
 // ================= STATE =================
 let cart = [];
-let selectedPrice = 199;
+
+// ================= PRICING SYSTEM =================
+function calculatePrice() {
+  const count = cart.length;
+
+  // SHAPES pricing
+  if (count === 1) return 39;
+  if (count === 2) return 79;
+  if (count === 3) return 109;
+  if (count === 4) return 139;
+  if (count >= 5) return 169;
+
+  return 0;
+}
 
 // ================= SCREEN CONTROL =================
 function showScreen(screenId) {
@@ -26,35 +39,28 @@ function goHome() {
   showScreen("homeScreen");
 }
 
-// ================= BACK BUTTON (NEW) =================
+// ================= BACK BUTTON =================
 function goBack() {
   const order = document.getElementById("orderScreen").style.display === "block";
-  const cart = document.getElementById("cartScreen").style.display === "block";
+  const cartScreen = document.getElementById("cartScreen").style.display === "block";
   const customize = document.getElementById("customizeScreen").style.display === "flex";
 
-  // If in order → go cart
   if (order) {
     showScreen("cartScreen");
     return;
   }
 
-  // If in cart → go customize (toys)
-  if (cart) {
+  if (cartScreen) {
     showScreen("customizeScreen");
     return;
   }
 
-  // If in customize → always go toys section
   if (customize) {
-    document.getElementById("toys").style.display = "grid";
-    document.getElementById("nameSection").style.display = "none";
-    document.getElementById("designView").style.display = "none";
+    showScreen("homeScreen");
     return;
   }
-
-  // fallback
-  showScreen("homeScreen");
 }
+
 // ================= TOY SELECT =================
 function selectToy(card, toy) {
   const img = card.querySelector("img")?.src || "";
@@ -65,7 +71,7 @@ function selectToy(card, toy) {
     cart.splice(index, 1);
     card.classList.remove("selected");
   } else {
-    cart.push({ name: toy, price: selectedPrice, img });
+    cart.push({ name: toy, img });
     card.classList.add("selected");
   }
 
@@ -111,7 +117,7 @@ function renderCart() {
   const box = document.getElementById("cartItems");
   box.innerHTML = "";
 
-  let total = 0;
+  let total = calculatePrice();
 
   if (cart.length === 0) {
     box.innerHTML = "<p>Your cart is empty 🛒</p>";
@@ -120,13 +126,10 @@ function renderCart() {
   }
 
   cart.forEach(item => {
-    total += item.price;
-
     box.innerHTML += `
       <div class="cart-item">
         <img src="${item.img}" style="width:60px;height:60px;border-radius:10px;">
         <div style="flex:1">${item.name}</div>
-        <div>₹${item.price}</div>
       </div>
     `;
   });
@@ -141,29 +144,42 @@ function buyNow() {
     return;
   }
 
-  showScreen("orderScreen");
+  goToOrder();
 }
 
-// ================= CHECKOUT FIX =================
+// ================= CHECKOUT =================
 function goToOrder() {
   if (cart.length === 0) {
     alert("Cart empty!");
     return;
   }
+
   showScreen("orderScreen");
+
+  // update order screen
+  document.getElementById("finalToy").innerText =
+    "Items: " + cart.map(i => i.name).join(", ");
+
+  const name = document.getElementById("customName")?.value || "";
+  document.getElementById("finalName").innerText =
+    name ? "Name: " + name : "";
+
+  document.getElementById("price").innerText =
+    "Total: ₹" + calculatePrice();
 }
 
 // ================= ORDER =================
 function sendOrder() {
   let msg = "🛒 NEW ORDER\n\n";
-  let total = 0;
 
   cart.forEach(item => {
-    msg += `${item.name} - ₹${item.price}\n`;
-    total += item.price;
+    msg += `${item.name}\n`;
   });
 
-  msg += `\nTotal: ₹${total}`;
+  const name = document.getElementById("customName")?.value;
+  if (name) msg += `\nName: ${name}`;
+
+  msg += `\n\nTotal: ₹${calculatePrice()}`;
 
   window.open(
     "https://wa.me/918109944185?text=" + encodeURIComponent(msg),
@@ -171,8 +187,7 @@ function sendOrder() {
   );
 }
 
-// ================= NAME FIX (CLICK ISSUE SOLUTION) =================
-// NOTE: name section now works ONLY if you call showSection properly
+// ================= NAME SECTION =================
 function showSection(section) {
   const toys = document.getElementById("toys");
   const name = document.getElementById("nameSection");
@@ -186,9 +201,4 @@ function showSection(section) {
     toys.style.display = "none";
     name.style.display = "flex";
   }
-}
-
-// ================= CONTINUE SHOPPING =================
-function continueShopping() {
-  showScreen("customizeScreen");
 }

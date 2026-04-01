@@ -1,3 +1,9 @@
+// ================= GLOBAL STATE =================
+let selectedToys = [];
+let selectedDesigns = [];
+let selectedToy = null;
+let cart = [];
+
 // ================= SCREEN SWITCH =================
 function openCustomize() {
   document.getElementById("homeScreen").style.display = "none";
@@ -12,22 +18,18 @@ function goToOrder() {
     "Toys: " + selectedToys.join(", ");
 
   document.getElementById("finalName").innerText =
-    "Name: " + document.getElementById("customName").value;
+    "Name: " + (document.getElementById("customName")?.value || "");
 }
 
-// ================= DATA =================
-let selectedToys = [];
-let selectedDesigns = [];
-
+// ================= TOY DATA =================
 const designData = {
-  "Flowers": ["Flower Design 1", "Flower Design 2"],
-  "Train": ["Engine", "Coach"],
-  "Cars": ["Sports Car", "Mini Car"]
+  Flowers: ["Flower Design 1", "Flower Design 2"],
+  Train: ["Engine", "Coach"],
+  Cars: ["Sports Car", "Mini Car"]
 };
 
-// ================= TOY SELECT =================
+// ================= TOY SELECT (MULTI SELECT) =================
 function selectToy(card, toy) {
-
   if (selectedToys.includes(toy)) {
     selectedToys = selectedToys.filter(t => t !== toy);
     card.classList.remove("selected");
@@ -41,24 +43,22 @@ function selectToy(card, toy) {
   calculatePrice();
 }
 
-// ================= SHOW DESIGNS =================
+// ================= DESIGN SHOW =================
 function showDesigns(toy) {
-  let designView = document.getElementById("designView");
-  let designs = designData[toy] || [];
+  const designView = document.getElementById("designView");
+  const designs = designData[toy] || [];
 
-  // 🔥 AGAR DESIGN NAHI HAI → HIDE KAR DO
   if (designs.length === 0) {
     designView.style.display = "none";
     designView.innerHTML = "";
     return;
   }
 
-  // warna show karo
   designView.style.display = "grid";
   designView.innerHTML = "";
 
   designs.forEach(d => {
-    let div = document.createElement("div");
+    const div = document.createElement("div");
     div.className = "card";
     div.innerText = d;
 
@@ -67,7 +67,8 @@ function showDesigns(toy) {
     designView.appendChild(div);
   });
 }
-// ================= DESIGN SELECT =================
+
+// ================= DESIGN TOGGLE =================
 function toggleDesign(card, design) {
   if (selectedDesigns.includes(design)) {
     selectedDesigns = selectedDesigns.filter(d => d !== design);
@@ -80,44 +81,39 @@ function toggleDesign(card, design) {
   updateBottom();
 }
 
-// ================= BOTTOM BAR =================
+// ================= BOTTOM STATUS =================
 function updateBottom() {
-  let text =
-    "Selected: " +
+  const text =
+    "Selected Toys: " +
     selectedToys.join(", ") +
-    " | " +
+    " | Designs: " +
     selectedDesigns.join(", ");
 
   document.getElementById("selectedToy").innerText = text;
 }
-// ================= SECTION SWITCH FIX =================
-function showSection(sectionId, element) {
 
-  // hide all
+// ================= SECTION SWITCH =================
+function showSection(sectionId, element) {
   document.getElementById("toys").style.display = "none";
   document.getElementById("nameSection").style.display = "none";
   document.getElementById("designView").style.display = "none";
 
-  // show सही तरीके से
   if (sectionId === "toys") {
     document.getElementById("toys").style.display = "grid";
-  } 
-  else if (sectionId === "nameSection") {
+  } else if (sectionId === "nameSection") {
     document.getElementById("nameSection").style.display = "flex";
   }
 
-  // active highlight
-  let items = document.querySelectorAll(".menu-item");
-  items.forEach(i => i.classList.remove("active"));
+  document.querySelectorAll(".menu-item")
+    .forEach(i => i.classList.remove("active"));
+
   element.classList.add("active");
 }
-function showToys() {
-  showSection('toys', document.querySelector('.menu-item'));
-}
-// ================= PRICE SYSTEM =================
+
+// ================= PRICE CALC =================
 function calculatePrice() {
-  let count = selectedToys.length;
-  let type = document.getElementById("orderType").value;
+  const count = selectedToys.length;
+  const type = document.getElementById("orderType").value;
 
   let price = 0;
 
@@ -126,70 +122,102 @@ function calculatePrice() {
     else if (count == 2) price = 79;
     else if (count == 3) price = 109;
     else if (count == 4) price = 139;
-    else if (count >= 6) price = 169;
+    else if (count >= 5) price = 169;
   }
 
-  else if (type === "kit") {
+  if (type === "kit") {
     if (count == 1) price = 89;
     else if (count == 2) price = 119;
     else if (count == 3) price = 169;
     else if (count == 4) price = 209;
-    else if (count >= 6) price = 269;
+    else if (count >= 5) price = 269;
   }
 
-  else if (type === "name") {
-    let name = document.getElementById("customName").value;
+  if (type === "name") {
+    const name = document.getElementById("customName")?.value || "";
     price = name.length * 20 + 259;
   }
 
-  else if (type === "magnet") {
+  if (type === "magnet") {
     price = 50;
   }
 
   document.getElementById("price").innerText = "Total: ₹" + price;
 }
-document.getElementById("orderType").addEventListener("change", calculatePrice);
-function selectToy(el, name) {
+
+document.getElementById("orderType")?.addEventListener("change", calculatePrice);
+
+// ================= PREVIEW PANEL =================
+function selectToyPreview(el, name) {
   document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
   el.classList.add("selected");
 
   selectedToy = name;
 
-  // open preview panel
-  document.getElementById("previewPanel").classList.add("active");
-
-  // update preview content
+  document.getElementById("previewPanel")?.classList.add("active");
   document.getElementById("previewTitle").innerText = name;
   document.getElementById("previewText").innerText = "Selected: " + name;
 
-  let img = el.querySelector("img").src;
-  document.getElementById("previewImg").src = img;
+  const img = el.querySelector("img")?.src;
+  if (img) document.getElementById("previewImg").src = img;
 }
-function selectToy(el, name) {
-  document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
-  el.classList.add("selected");
 
-  selectedToy = name;
-
-  // open preview panel
-  document.getElementById("previewPanel").classList.add("active");
-
-  // update preview content
-  document.getElementById("previewTitle").innerText = name;
-  document.getElementById("previewText").innerText = "Selected: " + name;
-
-  let img = el.querySelector("img").src;
-  document.getElementById("previewImg").src = img;
-}
+// ================= CART SYSTEM =================
 function addToCart() {
   if (!selectedToy) return;
 
-  cart.push(selectedToy);
+  cart.push({
+    name: selectedToy,
+    price: 199
+  });
+
+  const cartCount = document.getElementById("cartCount");
+  if (cartCount) cartCount.innerText = cart.length;
+
   alert("Added to Cart 🛒");
 }
+
+function showCart() {
+  document.getElementById("customizeScreen").style.display = "none";
+  document.getElementById("cartScreen").style.display = "block";
+
+  const cartItems = document.getElementById("cartItems");
+  cartItems.innerHTML = "";
+
+  let total = 0;
+
+  cart.forEach(item => {
+    total += item.price;
+
+    const div = document.createElement("div");
+    div.className = "cart-item";
+
+    div.innerHTML = `
+      <span>${item.name}</span>
+      <span>₹${item.price}</span>
+    `;
+
+    cartItems.appendChild(div);
+  });
+
+  document.getElementById("cartTotal").innerText = "Total: ₹" + total;
+}
+
+// ================= BUY NOW =================
 function buyNow() {
   if (!selectedToy) return;
 
-  alert("Redirecting to order...");
   document.getElementById("orderScreen").style.display = "flex";
+}
+function selectToyPreview(el, name) {
+  selectedToy = name;
+
+  const panel = document.getElementById("previewPanel");
+  panel.classList.add("active");
+
+  document.getElementById("previewTitle").innerText = name;
+  document.getElementById("previewText").innerText = "Selected: " + name;
+
+  const img = el.querySelector("img")?.src;
+  if (img) document.getElementById("previewImg").src = img;
 }

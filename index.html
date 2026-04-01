@@ -144,11 +144,15 @@
         <img src="images/toy3.jpg">
         <p>Sea shells (small size)</p>
     </div>
+    </div>
 
   <!-- NAME SECTION -->
     <div id="nameSection" class="section" style="display:none;">
     <input type="text" id="customName" placeholder="Enter Custom Name">
     </div>
+    <button onclick="goBack()" style="margin-top:15px; padding:10px 20px; border:none; border-radius:10px; background:#f48fb1; color:white;">
+  ⬅ Back
+</button>
 
   </div>
 
@@ -160,7 +164,7 @@
     <span id="selectedToy">No Toy Selected</span>
     <button onclick="goToOrder()">Order →</button>
   </div>
-
+  
 </section>
 
 <!-- ================= ORDER SCREEN ================= -->
@@ -180,6 +184,9 @@
   <h3 id="price">Total: ₹199</h3>
 
   <button onclick="sendOrder()">Place Order</button>
+  <button onclick="goBack()" style="margin-top:15px; padding:10px 20px; border:none; border-radius:10px; background:#f48fb1; color:white;">
+  ⬅ Back
+</button>
 </section>
 
 <!-- ================= CART SCREEN (OUTSIDE) ================= -->
@@ -191,6 +198,9 @@
   <h3 id="cartTotal">Total: ₹0</h3>
 
   <button onclick="goToOrder()">Checkout</button>
+  <button onclick="goBack()" style="margin-top:15px; padding:10px 20px; border:none; border-radius:10px; background:#f48fb1; color:white;">
+  ⬅ Back
+</button>
 </section>
 
 <!-- ================= PREVIEW PANEL (FIXED OVERLAY) ================= -->

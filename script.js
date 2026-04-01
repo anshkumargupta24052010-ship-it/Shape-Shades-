@@ -28,19 +28,33 @@ function goHome() {
 
 // ================= BACK BUTTON (NEW) =================
 function goBack() {
-  if (document.getElementById("orderScreen").style.display === "block") {
+  const order = document.getElementById("orderScreen").style.display === "block";
+  const cart = document.getElementById("cartScreen").style.display === "block";
+  const customize = document.getElementById("customizeScreen").style.display === "flex";
+
+  // If in order → go cart
+  if (order) {
     showScreen("cartScreen");
     return;
   }
 
-  if (document.getElementById("cartScreen").style.display === "block") {
+  // If in cart → go customize (toys)
+  if (cart) {
     showScreen("customizeScreen");
     return;
   }
 
+  // If in customize → always go toys section
+  if (customize) {
+    document.getElementById("toys").style.display = "grid";
+    document.getElementById("nameSection").style.display = "none";
+    document.getElementById("designView").style.display = "none";
+    return;
+  }
+
+  // fallback
   showScreen("homeScreen");
 }
-
 // ================= TOY SELECT =================
 function selectToy(card, toy) {
   const img = card.querySelector("img")?.src || "";

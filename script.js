@@ -9,7 +9,7 @@ function goToOrder() {
   document.getElementById("orderScreen").style.display = "block";
 
   document.getElementById("finalToy").innerText =
-    "Toy: " + (selectedToys[0] || "None");
+    "Toys: " + selectedToys.join(", ");
 
   document.getElementById("finalName").innerText =
     "Name: " + document.getElementById("customName").value;
@@ -28,15 +28,13 @@ const designData = {
 // ================= TOY SELECT =================
 function selectToy(card, toy) {
 
-  // remove old selection
-  document.querySelectorAll("#toys .card")
-    .forEach(c => c.classList.remove("selected"));
-
-  selectedToys = [toy];
-  card.classList.add("selected");
-
-  // reset designs
-  selectedDesigns = [];
+  if (selectedToys.includes(toy)) {
+    selectedToys = selectedToys.filter(t => t !== toy);
+    card.classList.remove("selected");
+  } else {
+    selectedToys.push(toy);
+    card.classList.add("selected");
+  }
 
   showDesigns(toy);
   updateBottom();
@@ -48,14 +46,14 @@ function showDesigns(toy) {
   let designView = document.getElementById("designView");
   let designs = designData[toy] || [];
 
-  selectedDesigns = [];
-
+  // 🔥 AGAR DESIGN NAHI HAI → HIDE KAR DO
   if (designs.length === 0) {
     designView.style.display = "none";
     designView.innerHTML = "";
     return;
   }
 
+  // warna show karo
   designView.style.display = "grid";
   designView.innerHTML = "";
 
@@ -64,35 +62,43 @@ function showDesigns(toy) {
     div.className = "card";
     div.innerText = d;
 
-    div.onclick = () => {
-      document.querySelectorAll("#designView .card")
-        .forEach(c => c.classList.remove("selected"));
-
-      selectedDesigns = [d];
-      div.classList.add("selected");
-
-      updateBottom();
-    };
+    div.onclick = () => toggleDesign(div, d);
 
     designView.appendChild(div);
   });
 }
+// ================= DESIGN SELECT =================
+function toggleDesign(card, design) {
+  if (selectedDesigns.includes(design)) {
+    selectedDesigns = selectedDesigns.filter(d => d !== design);
+    card.classList.remove("selected");
+  } else {
+    selectedDesigns.push(design);
+    card.classList.add("selected");
+  }
+
+  updateBottom();
+}
 
 // ================= BOTTOM BAR =================
 function updateBottom() {
-  let text = "Toy: " + (selectedToys[0] || "None") +
-             " | Design: " + (selectedDesigns[0] || "None");
+  let text =
+    "Selected: " +
+    selectedToys.join(", ") +
+    " | " +
+    selectedDesigns.join(", ");
 
   document.getElementById("selectedToy").innerText = text;
 }
-
-// ================= SECTION SWITCH =================
+// ================= SECTION SWITCH FIX =================
 function showSection(sectionId, element) {
 
+  // hide all
   document.getElementById("toys").style.display = "none";
   document.getElementById("nameSection").style.display = "none";
   document.getElementById("designView").style.display = "none";
 
+  // show सही तरीके से
   if (sectionId === "toys") {
     document.getElementById("toys").style.display = "grid";
   } 
@@ -100,11 +106,14 @@ function showSection(sectionId, element) {
     document.getElementById("nameSection").style.display = "flex";
   }
 
+  // active highlight
   let items = document.querySelectorAll(".menu-item");
   items.forEach(i => i.classList.remove("active"));
   element.classList.add("active");
 }
-
+function showToys() {
+  showSection('toys', document.querySelector('.menu-item'));
+}
 // ================= PRICE SYSTEM =================
 function calculatePrice() {
   let count = selectedToys.length;
@@ -117,7 +126,7 @@ function calculatePrice() {
     else if (count == 2) price = 79;
     else if (count == 3) price = 109;
     else if (count == 4) price = 139;
-    else if (count >= 5) price = 169;
+    else if (count >= 6) price = 169;
   }
 
   else if (type === "kit") {
@@ -125,7 +134,7 @@ function calculatePrice() {
     else if (count == 2) price = 119;
     else if (count == 3) price = 169;
     else if (count == 4) price = 209;
-    else if (count >= 5) price = 269;
+    else if (count >= 6) price = 269;
   }
 
   else if (type === "name") {
@@ -139,29 +148,48 @@ function calculatePrice() {
 
   document.getElementById("price").innerText = "Total: ₹" + price;
 }
-
 document.getElementById("orderType").addEventListener("change", calculatePrice);
+function selectToy(el, name) {
+  document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
+  el.classList.add("selected");
 
-// ================= WHATSAPP ORDER =================
-function sendOrder() {
+  selectedToy = name;
 
-  let toy = selectedToys[0] || "None";
-  let design = selectedDesigns[0] || "None";
-  let name = document.getElementById("customName").value || "None";
-  let price = document.getElementById("price").innerText;
+  // open preview panel
+  document.getElementById("previewPanel").classList.add("active");
 
-  let message = 
-`🛒 New Order
-Toy: ${toy}
-Design: ${design}
-Name: ${name}
-${price}`;
+  // update preview content
+  document.getElementById("previewTitle").innerText = name;
+  document.getElementById("previewText").innerText = "Selected: " + name;
 
-  // ✅ CORRECT FORMAT (no +, no space)
-  let phone = "919340489691"; // apna number
+  let img = el.querySelector("img").src;
+  document.getElementById("previewImg").src = img;
+}
+function selectToy(el, name) {
+  document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
+  el.classList.add("selected");
 
-  let url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  selectedToy = name;
 
-  // 🔥 IMPORTANT FIX FOR MOBILE
-  window.location.href = url;
+  // open preview panel
+  document.getElementById("previewPanel").classList.add("active");
+
+  // update preview content
+  document.getElementById("previewTitle").innerText = name;
+  document.getElementById("previewText").innerText = "Selected: " + name;
+
+  let img = el.querySelector("img").src;
+  document.getElementById("previewImg").src = img;
+}
+function addToCart() {
+  if (!selectedToy) return;
+
+  cart.push(selectedToy);
+  alert("Added to Cart 🛒");
+}
+function buyNow() {
+  if (!selectedToy) return;
+
+  alert("Redirecting to order...");
+  document.getElementById("orderScreen").style.display = "flex";
 }

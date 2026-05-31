@@ -2,7 +2,7 @@
 let cart = [];
 let toysData = []; 
 
-// ⚠️ APNI GOOGLE SHEET KI PUBLISHED CSV LINK YAHA DALO
+// ⚠️ APNI GOOGLE SHEET KI PUBLISHED CSV LINK YAHA PASTE KARNA KAL
 const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTFdylNEN0S_Xqc66-e1xiuHYPMT4C01N-bsTQ4k5VshHp6SEsYiOKQ03bik3wEh5pYcLNlIL3dzHTw/pub?output=csv'; 
 
 // ================= FETCH DATA FROM GOOGLE SHEET =================
@@ -131,14 +131,9 @@ function openCustomize() {
   const customize = document.getElementById("customizeScreen");
 
   if (home && customize) {
-    home.classList.add("screen-fade-out");
-    setTimeout(() => {
-      home.style.display = "none";
-      home.classList.remove("screen-fade-out");
-      customize.style.display = "flex";
-      customize.classList.add("screen-fade-in");
-      setTimeout(() => { customize.classList.remove("screen-fade-in"); }, 500);
-    }, 400);
+    home.style.display = "none";
+    customize.style.display = "flex"; 
+    closePreview();
   }
 }
 
@@ -150,7 +145,6 @@ function goBack() {
   if (order) { showScreen("cartScreen"); return; }
   if (cartScreen) { showScreen("customizeScreen"); return; }
   if (customize) { 
-      document.getElementById("homeScreen").style.display = "block";
       showScreen("homeScreen"); 
   }
 }
@@ -166,7 +160,6 @@ function selectToy(card, toyName, toyPrice) {
     document.getElementById("selectedToy").innerText = "No Toy Selected";
     closePreview();
   } else {
-    // Single select module toggle behavior
     document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
     cart = [{ name: toyName, img, price: toyPrice }];
     card.classList.add("selected");
@@ -184,11 +177,11 @@ function updatePreview(name, img, price) {
   panel.classList.add("active");
 }
 
+// UTILS
 function closePreview() { document.getElementById("previewPanel")?.classList.remove("active"); }
 function updateCartCount() { document.getElementById("cartCount").innerText = cart.length; }
 function addToCart() { alert("Added to Design Cart 🛒"); closePreview(); }
 function buyNow() { goToOrder(); }
-
 function showCart() { showScreen("cartScreen"); renderCart(); }
 
 function renderCart() {
@@ -231,6 +224,7 @@ function goToOrder() {
   updateFinalPrice();
 }
 
+// WHATSAPP OUTFLOW
 function sendOrder() {
   const name = document.getElementById("customName")?.value.trim();
   let msg = "✨ 🛒 NEW ORDER FROM WEBSITE 🎨 ✨\n\n";

@@ -13,7 +13,7 @@ window.addEventListener('DOMContentLoaded', () => {
 function fetchProductsFromSheet() {
     const toysGrid = document.getElementById('toys');
     
-    if(!sheetURL || sheetURL.includes("YOUR_PUBLISHED_GOOGLE_SHEET")) {
+    if(!sheetURL || sheetURL.includes("https://docs.google.com/spreadsheets/d/e/2PACX-1vTFdylNEN0S_Xqc66-e1xiuHYPMT4C01N-bsTQ4k5VshHp6SEsYiOKQ03bik3wEh5pYcLNlIL3dzHTw/pub?output=csv")) {
         console.log("Using backup local data.");
         toysData = [
           { name: "Flowers", img: "images/flower.jpeg", price: 39 },

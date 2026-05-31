@@ -5,24 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ShaPe & ShaDe</title>
   <link rel="stylesheet" href="style.css">
+  <!-- Modern Font for Aesthetic Look -->
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- PapaParse Library to read Google Sheet -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
 </head>
 <body>
 
 <!-- ================= HOME ================= -->
 <section id="homeScreen">
   <div class="overlay">
-
-    <h1 class="main-heading">ShaPe & ShaDe</h1>
-
+    <!-- Bus onclick="triggerAdminCheck()" add kiya hai heading par -->
+<h1 class="main-heading" onclick="triggerAdminCheck()">ShaPe & ShaDe</h1>
     <p class="tagline">
       Creative DIY Kits for Kids 🎨 <br>
       Fun • Learning • Creativity
     </p>
-
     <button class="cta-btn" onclick="openCustomize()">
       Create Your DIY Kit 🎁
     </button>
-
   </div>
 </section>
 
@@ -40,124 +41,23 @@
 
   <!-- CONTENT -->
   <div class="content">
-
-    <!-- TOYS GRID -->
-     <div id="toys" class="section">
-      <div class="card" onclick="selectToy(this,'Flowers')">
-        <img src="images/flower.jpeg">
-        <p>Flowers</p>
-      </div>
-
-      <div class="card" onclick="selectToy(this,'Train')">
-        <img src="images/toy2.jpg">
-        <p>Train</p>
-      </div>
-
-      <div class="card" onclick="selectToy(this,'Train Engine')">
-        <img src="images/trainengine.jpeg">
-        <p>Train Engine</p>
-      </div>
-      <div class="card" onclick="selectToy(this,'Bus')">
-        <img src="images/bus.jpeg">
-        <p>Bus</p>
-      </div>
-      <div class="card" onclick="selectToy(this,'Bike')">
-        <img src="images/toy3.jpg">
-        <p>Bike</p>
-      </div>
-      <div class="card" onclick="selectToy(this,'Delivery Truck')">
-        <img src="images/toy3.jpg">
-        <p>Delivery Truck</p>
-      </div>
-      <div class="card" onclick="selectToy(this,'Cars')">
-        <img src="images/cars.jpeg">
-        <p>Cars</p>
-      </div>
-      <div class="card" onclick="selectToy(this,'Dinosaur')">
-        <img src="images/dino.jpeg">
-        <p>Dinosaur</p>
-      </div>
-      <div class="card" onclick="selectToy(this,'Butterflies')">
-        <img src="images/butterfly.jpeg">
-        <p>Butterflies</p>
-      </div>
-      <div class="card" onclick="selectToy(this,'Houses')">
-        <img src="images/toy3.jpg">
-        <p>Houses</p>
-      </div>
-      <div class="card" onclick="selectToy(this,'Huts')">
-        <img src="images/toy3.jpg">
-        <p>Huts</p>
-      </div>
-      <div class="card" onclick="selectToy(this,'Easter Eggs')">
-        <img src="images/toy3.jpg">
-        <p>Easter Eggs</p>
-      </div>      
-      <div class="card" onclick="selectToy(this,'Aeroplane')">
-        <img src="images/toy3.jpg">
-        <p>Aeroplane</p>
-      </div>      
-      <div class="card" onclick="selectToy(this,'Astronaut')">
-        <img src="images/toy3.jpg">
-        <p>Astronaut</p>
-      </div>
-      <div class="card" onclick="selectToy(this,'Aircraft')">
-        <img src="images/toy3.jpg">
-        <p>Aircraft</p>
-      </div>
-      <div class="card" onclick="selectToy(this,'Bear')">
-        <img src="images/toy3.jpg">
-        <p>Bear</p>
-      </div>
-      <div class="card" onclick="selectToy(this,'Lion')">
-        <img src="images/toy3.jpg">
-        <p>Lion</p>
-      </div>
-      <div class="card" onclick="selectToy(this,'Pig')">
-        <img src="images/toy3.jpg">
-        <p>Pig</p>
-      </div>
-      <div class="card" onclick="selectToy(this,'Frogs')">
-        <img src="images/toy3.jpg">
-        <p>Frogs</p>
-      </div>
-      <div class="card" onclick="selectToy(this,'Squirrel')">
-        <img src="images/Squirrel.jpeg">
-        <p>Squirrel</p>
-      </div>
-      <div class="card" onclick="selectToy(this,'Porcupine')">
-        <img src="images/Porcupine.jpeg">
-        <p>Porcupine</p>
-      </div>
-      <div class="card" onclick="selectToy(this,'fox')">
-        <img src="images/toy3.jpg">
-        <p>fox</p>
-      </div>
-      <div class="card" onclick="selectToy(this,'owl')">
-        <img src="images/toy3.jpg">
-        <p>owl</p>
-      </div>
-      <div class="card" onclick="selectToy(this,'Tortoise')">
-        <img src="images/tortoise.jpeg">
-        <p>Tortoise</p>
-      </div><div class="card" onclick="selectToy(this,'Sea shells (small size)')">
-        <img src="images/seashell.jpeg">
-        <p>Sea shells (small size)</p>
-    </div>
+    <!-- TOYS GRID (Ab ye pure khali rahega, JavaScript isme khud data bharega) -->
+    <div id="toys" class="section">
+       <p id="loadingText">Loading cute toys for you... ✨</p>
     </div>
 
-  <!-- NAME SECTION -->
+    <!-- NAME SECTION -->
     <div id="nameSection" class="section" style="display:none;">
-    <input type="text" id="customName" placeholder="Enter Custom Name">
+      <div class="name-box">
+        <h3>Custom Name Letters</h3>
+        <p>Apne bacche ka naam likhein (Per letter cost dynamic calculate hoga)</p>
+        <input type="text" id="customName" placeholder="Enter Custom Name (e.g. KABIR)" oninput="updateNamePrice()">
+        <p id="nameFeedback" class="price-badge"></p>
+      </div>
     </div>
-    <button onclick="goBack()" style="margin-top:15px; padding:10px 20px; border:none; border-radius:10px; background:#f48fb1; color:white;">
-  ⬅ Back
-</button>
-
+    
+    <button class="back-global-btn" onclick="goBack()">⬅ Back</button>
   </div>
-
-  <!-- DESIGN VIEW -->
-  <div id="designView" class="section" style="display:none;"></div>
 
   <!-- BOTTOM BAR -->
   <div class="bottom-bar">
@@ -169,58 +69,51 @@
 
 <!-- ================= ORDER SCREEN ================= -->
 <section id="orderScreen" style="display:none;">
-  <h2>Your Order</h2>
+  <div class="order-container">
+    <h2>Your Order 🎁</h2>
+    <p id="finalToy"></p>
+    <p id="finalName"></p>
 
-  <p id="finalToy"></p>
-  <p id="finalName"></p>
+    <div class="form-group">
+      <label for="orderType">Select Kit Type:</label>
+      <select id="orderType" onchange="updateFinalPrice()">
+        <option value="shapes">Only Shapes</option>
+        <option value="kit">Kit (Colors + Brush)</option>
+        <option value="name">Custom Name Kit</option>
+        <option value="magnet">Magnet</option>
+      </select>
+    </div>
 
-  <select id="orderType">
-    <option value="shapes">Only Shapes</option>
-    <option value="kit">Kit (Colors + Brush)</option>
-    <option value="name">Custom Name Kit</option>
-    <option value="magnet">Magnet</option>
-  </select>
+    <h3 id="price" class="final-total">Total: ₹0</h3>
 
-  <h3 id="price">Total: ₹199</h3>
-
-  <button onclick="sendOrder()">Place Order</button>
-  <button onclick="goBack()" style="margin-top:15px; padding:10px 20px; border:none; border-radius:10px; background:#f48fb1; color:white;">
-  ⬅ Back
-</button>
-</section>
-
-<!-- ================= CART SCREEN (OUTSIDE) ================= -->
-<section id="cartScreen" style="display:none;">
-  <h2>Your Cart 🛒</h2>
-
-  <div id="cartItems"></div>
-
-  <h3 id="cartTotal">Total: ₹0</h3>
-
-  <button onclick="goToOrder()">Checkout</button>
-  <button onclick="goBack()" style="margin-top:15px; padding:10px 20px; border:none; border-radius:10px; background:#f48fb1; color:white;">
-  ⬅ Back
-</button>
-</section>
-
-<!-- ================= PREVIEW PANEL (FIXED OVERLAY) ================= -->
-<div id="previewPanel" class="preview-panel">
-
-  <div class="preview-content">
-
-    <img id="previewImg" src="" alt="Toy">
-
-    <h3 id="previewTitle">Select a Toy</h3>
-
-    <p id="previewText">Your selected item will appear here</p>
-
-    <button onclick="addToCart()">Add to Cart</button>
-    <button onclick="buyNow()">⚡ Buy Now</button>
-
+    <button class="action-btn" onclick="sendOrder()">Place Order on WhatsApp 🚀</button>
+    <button class="back-link" onclick="goBack()">⬅ Back to Cart</button>
   </div>
+</section>
 
+<!-- ================= CART SCREEN ================= -->
+<section id="cartScreen" style="display:none;">
+  <div class="cart-container">
+    <h2>Your Cart 🛒</h2>
+    <div id="cartItems"></div>
+    <h3 id="cartTotal">Total: ₹0</h3>
+    <button class="action-btn" onclick="goToOrder()">Checkout ⚡</button>
+    <button class="back-link" onclick="goBack()">⬅ Back</button>
+  </div>
+</section>
+
+<!-- ================= PREVIEW PANEL ================= -->
+<div id="previewPanel" class="preview-panel">
+  <div class="preview-content">
+    <span class="close-preview" onclick="closePreview()">×</span>
+    <img id="previewImg" src="" alt="Toy">
+    <h3 id="previewTitle">Select a Toy</h3>
+    <p id="previewText">Your selected item will appear here</p>
+    <button onclick="addToCart()">Add to Cart 🛒</button>
+    <button onclick="buyNow()" style="background: #ec6a9e;">⚡ Buy Now</button>
+  </div>
 </div>
-
-<script src="script.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+<script src="script.js"></script> 
 </body>
 </html>

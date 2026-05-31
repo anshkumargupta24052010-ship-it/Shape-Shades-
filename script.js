@@ -1,242 +1,257 @@
-/* ================= CONFIGS & RESETS ================= */
-:root {
-  --primary: #e05275;
-  --primary-light: #f48fb1;
-  --accent: #fcdad7;
-  --bg-creamy: #fffafb;
-  --text-dark: #4a4a4a;
-  --shadow-soft: 0 8px 25px rgba(244, 143, 177, 0.12);
+// ================= CONFIG & STATE =================
+let cart = [];
+let toysData = []; 
+
+// ⚠️ APNI GOOGLE SHEET KI PUBLISHED CSV LINK YAHA DALO
+const sheetURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTFdylNEN0S_Xqc66-e1xiuHYPMT4C01N-bsTQ4k5VshHp6SEsYiOKQ03bik3wEh5pYcLNlIL3dzHTw/pub?output=csv'; 
+
+// ================= FETCH DATA FROM GOOGLE SHEET =================
+window.addEventListener('DOMContentLoaded', () => {
+    fetchProductsFromSheet();
+});
+
+function fetchProductsFromSheet() {
+    const toysGrid = document.getElementById('toys');
+    
+    if(!sheetURL || sheetURL.includes("YOUR_PUBLISHED_GOOGLE_SHEET")) {
+        console.log("Using backup local data.");
+        toysData = [
+          { name: "Flowers", img: "images/flower.jpeg", price: 39 },
+          { name: "Train", img: "images/trainengine.jpeg", price: 39 },
+          { name: "Dinosaur", img: "images/dino.jpeg", price: 39 }
+        ];
+        renderToys();
+        return;
+    }
+
+    Papa.parse(sheetURL, {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+            toysData = results.data.filter(item => item.Name && item.Category === 'toys').map(item => {
+                return { 
+                    name: item.Name, 
+                    img: item.Image.trim(), 
+                    price: parseFloat(item.Price) || 39 
+                };
+            });
+            renderToys();
+        },
+        error: function(err) {
+            console.error("Sheet Loading Error:", err);
+            if(toysGrid) toysGrid.innerHTML = "<p>Stock refresh karne mein dikkat aa rahi hai... 🧸</p>";
+        }
+    });
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+function renderToys() {
+    const toysGrid = document.getElementById('toys');
+    if(!toysGrid) return;
+    toysGrid.innerHTML = ""; 
+    
+    if(toysData.length === 0) {
+        toysGrid.innerHTML = "<p>No toys available right now ✨</p>";
+        return;
+    }
+
+    toysData.forEach(product => {
+        const cardHTML = `
+            <div class="card" onclick="selectToy(this, '${product.name.replace(/'/g, "\\'")}', ${product.price})">
+                <img src="${product.img}" alt="${product.name}">
+                <p>${product.name}</p>
+                <span style="font-size:0.8rem; font-weight:700; color:#e05275;">₹${product.price}</span>
+            </div>
+        `;
+        toysGrid.innerHTML += cardHTML;
+    });
 }
 
-html, body {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  font-family: 'Quicksand', sans-serif;
-  background: var(--bg-creamy);
-  color: var(--text-dark);
-  overflow-x: hidden;
+// ================= SECRET ADMIN ACCESSIBILITY =================
+let headingClicks = 0;
+function triggerAdminCheck() {
+    headingClicks++;
+    if(headingClicks >= 5) {
+        headingClicks = 0; 
+        const password = prompt("Enter Secret Admin Password to Manage Products:");
+        if(password === "SHAPESHADE2026") {
+            alert("Access Granted! Opening Google Sheet Database...");
+            window.open("https://docs.google.com/spreadsheets/", "_blank");
+        } else if (password !== null) {
+            alert("Wrong Password! Access Denied ❌");
+        }
+    }
 }
 
-/* ================= 🏠 HOME SCREEN ================= */
-#homeScreen {
-  width: 100vw;
-  height: 100vh;
-  position: absolute;
-  top: 0;
-  left: 0;
-  background: url('images/homepageimage.jpeg') no-repeat center center;
-  background-size: cover;
-  z-index: 10;
+// ================= DYNAMIC PRICING SYSTEM =================
+function calculatePrice() {
+  let totalToysPrice = 0;
+  cart.forEach(item => { totalToysPrice += item.price; });
+  const nameInput = document.getElementById("customName")?.value.trim() || "";
+  if(nameInput.length > 0) { totalToysPrice += (nameInput.length * 30); }
+  return totalToysPrice;
 }
 
-.overlay {
-  width: 100%;
-  height: 100%;
-  background: rgba(255, 245, 247, 0.78);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  padding: 20px;
-  text-align: center;
+function updateNamePrice() {
+    const name = document.getElementById("customName").value.trim();
+    const feedback = document.getElementById("nameFeedback");
+    if(name.length > 0) {
+        feedback.innerText = `Custom blocks cost: ₹${name.length * 30} (${name.length} letters)`;
+    } else {
+        feedback.innerText = "";
+    }
+    updateFinalPrice();
 }
 
-.main-heading {
-  font-size: clamp(2.5rem, 6vw, 4.2rem);
-  font-weight: 700;
-  margin-bottom: 15px;
-  color: var(--primary);
-  letter-spacing: -1px;
-  cursor: pointer;
+function updateFinalPrice() {
+    const totalPrice = calculatePrice();
+    const priceEl = document.getElementById("price");
+    if(priceEl) priceEl.innerText = "Total: ₹" + totalPrice;
 }
 
-.tagline {
-  font-size: clamp(1rem, 3vw, 1.3rem);
-  font-weight: 600;
-  margin-bottom: 30px;
-  color: #5c444a;
-  line-height: 1.5;
+// ================= SCREEN CONTROL & ANIMATIONS =================
+function showScreen(screenId) {
+  const screens = ["homeScreen", "customizeScreen", "cartScreen", "orderScreen"];
+  screens.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = "none";
+  });
+
+  const target = document.getElementById(screenId);
+  if(screenId === "customizeScreen") {
+      target.style.display = "flex";
+  } else {
+      target.style.display = "block";
+  }
+  closePreview();
 }
 
-.cta-btn {
-  padding: 15px 45px;
-  background: var(--primary);
-  border-radius: 50px;
-  border: none;
-  color: white;
-  font-size: 1.1rem;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 8px 20px rgba(224, 82, 117, 0.3);
-  transition: all 0.3s ease;
-}
-.cta-btn:hover {
-  transform: scale(1.04);
-  background: var(--primary-light);
+function openCustomize() {
+  const home = document.getElementById("homeScreen");
+  const customize = document.getElementById("customizeScreen");
+
+  if (home && customize) {
+    home.classList.add("screen-fade-out");
+    setTimeout(() => {
+      home.style.display = "none";
+      home.classList.remove("screen-fade-out");
+      customize.style.display = "flex";
+      customize.classList.add("screen-fade-in");
+      setTimeout(() => { customize.classList.remove("screen-fade-in"); }, 500);
+    }, 400);
+  }
 }
 
-/* SCREEN TRANSITIONS */
-.screen-fade-out {
-  opacity: 0 !important;
-  transform: scale(0.95) !important;
-  transition: all 0.4s ease-in-out;
-  pointer-events: none;
-}
-.screen-fade-in {
-  animation: smoothScreenEntry 0.5s ease-out forwards;
-}
-@keyframes smoothScreenEntry {
-  from { opacity: 0; transform: scale(1.05); }
-  to { opacity: 1; transform: scale(1); }
+function goBack() {
+  const order = document.getElementById("orderScreen").style.display === "block";
+  const cartScreen = document.getElementById("cartScreen").style.display === "block";
+  const customize = document.getElementById("customizeScreen").style.display === "flex";
+
+  if (order) { showScreen("cartScreen"); return; }
+  if (cartScreen) { showScreen("customizeScreen"); return; }
+  if (customize) { 
+      document.getElementById("homeScreen").style.display = "block";
+      showScreen("homeScreen"); 
+  }
 }
 
-/* ================= 🛠️ CUSTOMIZE SCREEN LAYER ================= */
-#customizeScreen {
-  display: flex; /* Flexbox implementation */
-  width: 100vw;
-  height: 100vh;
-  background: var(--bg-creamy);
-  position: relative;
-  z-index: 5;
+// ================= TOY SELECT & CART =================
+function selectToy(card, toyName, toyPrice) {
+  const img = card.querySelector("img")?.src || "";
+  const index = cart.findIndex(i => i.name === toyName);
+
+  if (index !== -1) {
+    cart.splice(index, 1);
+    card.classList.remove("selected");
+    document.getElementById("selectedToy").innerText = "No Toy Selected";
+    closePreview();
+  } else {
+    // Single select module toggle behavior
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+    cart = [{ name: toyName, img, price: toyPrice }];
+    card.classList.add("selected");
+    document.getElementById("selectedToy").innerText = "Selected: " + toyName;
+    updatePreview(toyName, img, toyPrice);
+  }
+  updateCartCount();
 }
 
-.sidebar {
-  width: 130px;
-  height: 100vh;
-  background: #fff0f3;
-  box-shadow: 3px 0 20px rgba(0,0,0,0.02);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 30px;
-  gap: 15px;
+function updatePreview(name, img, price) {
+  const panel = document.getElementById("previewPanel");
+  document.getElementById("previewTitle").innerText = name;
+  document.getElementById("previewText").innerText = `Rate: ₹${price} | Added to sequence layout.`;
+  document.getElementById("previewImg").src = img;
+  panel.classList.add("active");
 }
 
-.menu-item {
-  width: 85%;
-  text-align: center;
-  padding: 12px 5px;
-  font-size: 0.9rem;
-  font-weight: 700;
-  border-radius: 16px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  color: #7d5c64;
-}
-.menu-item.active {
-  background: var(--primary);
-  color: white;
-  box-shadow: 0 6px 12px rgba(224, 82, 117, 0.2);
-}
+function closePreview() { document.getElementById("previewPanel")?.classList.remove("active"); }
+function updateCartCount() { document.getElementById("cartCount").innerText = cart.length; }
+function addToCart() { alert("Added to Design Cart 🛒"); closePreview(); }
+function buyNow() { goToOrder(); }
 
-.content {
-  flex: 1;
-  height: 100vh;
-  padding: 30px;
-  overflow-y: auto;
-  position: relative;
-  padding-bottom: 120px;
-}
+function showCart() { showScreen("cartScreen"); renderCart(); }
 
-/* TOYS GRID */
-#toys {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  gap: 20px;
+function renderCart() {
+  const box = document.getElementById("cartItems");
+  box.innerHTML = "";
+  let total = calculatePrice();
+
+  if (cart.length === 0) {
+    box.innerHTML = "<p style='text-align:center; color:#888;'>Your cart is empty 🛒</p>";
+    document.getElementById("cartTotal").innerText = "Total: ₹0";
+    return;
+  }
+
+  cart.forEach((item, idx) => {
+    box.innerHTML += `
+      <div class="cart-item">
+        <img src="${item.img}" style="width:50px;height:50px;border-radius:8px;object-fit:cover;">
+        <div style="flex:1; font-weight:600; color:#444; margin-left:10px;">${item.name} (₹${item.price})</div>
+        <button onclick="removeItem(${idx})" style="background:none; border:none; color:#ff6a9e; cursor:pointer; font-size:18px;">×</button>
+      </div>
+    `;
+  });
+  document.getElementById("cartTotal").innerText = "Total: ₹" + total;
 }
 
-.card {
-  background: white;
-  border-radius: 20px;
-  padding: 12px;
-  text-align: center;
-  box-shadow: var(--shadow-soft);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: 2px solid transparent;
-}
-.card:hover { transform: translateY(-4px); }
-.card.selected { border-color: var(--primary); background: #fff5f7; }
-.card img { width: 100%; height: 115px; object-fit: cover; border-radius: 14px; }
-.card p { margin: 8px 0 4px 0; font-weight: 700; font-size: 0.9rem; }
-
-/* 🛒 BOTTOM ACTION BAR */
-.bottom-bar {
-  position: fixed;
-  bottom: 20px;
-  left: 160px;
-  right: 30px;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  padding: 15px 25px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-  border-radius: 20px;
-  z-index: 99;
-}
-.bottom-bar button {
-  padding: 12px 28px; border-radius: 50px;
-  background: var(--primary); color: white; border: none; font-weight: 700; cursor: pointer;
+function removeItem(idx) {
+    cart.splice(idx, 1);
+    document.querySelectorAll('.card').forEach(card => card.classList.remove('selected'));
+    updateCartCount();
+    renderCart();
 }
 
-/* 📱 PREVIEW PANEL (Fixes Image Explosion) */
-.preview-panel {
-  position: fixed;
-  right: -380px;
-  top: 0;
-  width: 350px;
-  height: 100vh;
-  background: white;
-  box-shadow: -5px 0 30px rgba(0,0,0,0.05);
-  transition: right 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-  z-index: 100;
-  padding: 30px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+function goToOrder() {
+  const name = document.getElementById("customName")?.value.trim() || "";
+  if (cart.length === 0 && name.length === 0) { alert("Cart empty! Please select a toy or enter a custom name."); return; }
+
+  showScreen("orderScreen");
+  document.getElementById("finalToy").innerText = cart.length > 0 ? "Toys Selected: " + cart.map(i => `${i.name} (₹${i.price})`).join(", ") : "No Toys Selected";
+  document.getElementById("finalName").innerText = name ? "Custom Name Requested: " + name : "No Custom Name Package";
+  updateFinalPrice();
 }
-.preview-panel.active { right: 0; }
-.preview-content img { width: 80%; max-height: 200px; object-fit: cover; border-radius: 20px; margin-bottom: 20px; box-shadow: var(--shadow-soft); }
-.preview-content h3 { margin-bottom: 10px; color: var(--text-dark); }
-.preview-content p { font-size: 0.9rem; color: #888; margin-bottom: 25px; }
-.preview-content button { width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 50px; border: none; font-weight: 700; cursor: pointer; background: var(--primary); color: white; }
-.close-preview { position: absolute; top: 20px; left: 20px; font-size: 2rem; cursor: pointer; color: #aaa; }
 
-/* UTILITIES */
-.back-global-btn { position: absolute; top: 25px; right: 30px; padding: 8px 16px; border-radius: 12px; border: none; background: var(--accent); color: var(--primary); font-weight: 700; cursor: pointer; }
-#nameSection { height: 60vh; display: none; align-items: center; justify-content: center; width: 100%; }
-.name-box { background: white; padding: 35px; border-radius: 24px; box-shadow: var(--shadow-soft); text-align: center; width: 100%; max-width: 380px; }
-.name-box input { padding: 12px; width: 100%; border-radius: 12px; border: 2px solid var(--accent); font-size: 1rem; text-align: center; font-weight: 700; outline: none; margin: 15px 0; }
+function sendOrder() {
+  const name = document.getElementById("customName")?.value.trim();
+  let msg = "✨ 🛒 NEW ORDER FROM WEBSITE 🎨 ✨\n\n";
+  
+  if(cart.length > 0) {
+      msg += `*Selected Toys:* \n`;
+      cart.forEach((item, index) => { msg += `${index + 1}. ${item.name} - ₹${item.price}\n`; });
+  }
+  if (name) msg += `\n*Custom Name Blocks:* ${name} (₹${name.length * 30})\n`;
+  const type = document.getElementById("orderType").value;
+  msg += `*Kit Pack Option:* ${type.toUpperCase()}\n`;
+  msg += `\n*Estimated Bill Total:* ₹${calculatePrice()}`;
 
-/* CART & ORDER PAGES */
-#cartScreen, #orderScreen { display: none; width: 100vw; min-height: 100vh; background: var(--bg-creamy); padding: 40px 20px; position: absolute; top: 0; left: 0; z-index: 20; }
-.cart-container, .order-container { max-width: 480px; margin: 0 auto; padding: 30px; background: white; border-radius: 24px; box-shadow: var(--shadow-soft); position: relative; }
-.cart-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid #ffeef2; margin-bottom: 10px; }
-.action-btn { width: 100%; padding: 15px; border-radius: 50px; background: var(--primary); color: white; font-weight: 700; border: none; margin-top: 20px; cursor: pointer; }
-.back-link { width: 100%; background: none; border: none; color: #888; font-weight: 600; margin-top: 15px; cursor: pointer; }
-.form-group { margin: 15px 0; display: flex; flex-direction: column; text-align: left; }
-.form-group select { padding: 10px; border-radius: 10px; border: 2px solid var(--accent); font-weight: 600; outline: none; }
+  window.open("https://wa.me/918109944185?text=" + encodeURIComponent(msg), "_blank");
+}
 
-/* ================= 📱 MOBILE UI ================= */
-@media (max-width: 768px) {
-  #customizeScreen { flex-direction: column-reverse; }
-  .sidebar { width: 100%; height: 65px; flex-direction: row; justify-content: space-around; padding-top: 0; position: fixed; bottom: 0; left: 0; border-radius: 20px 20px 0 0; background: #fff; box-shadow: 0 -4px 20px rgba(0,0,0,0.05); z-index: 99; }
-  .menu-item { width: auto; padding: 8px 16px; }
-  .content { padding: 15px; padding-bottom: 160px; height: calc(100vh - 65px); }
-  #toys { grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; }
-  .bottom-bar { left: 15px; right: 15px; bottom: 85px; padding: 10px 15px; }
-  .preview-panel { right: -100%; width: 100%; height: 50vh; top: auto; bottom: -50vh; border-radius: 30px 30px 0 0; transition: bottom 0.4s ease; }
-  .preview-panel.active { right: 0; bottom: 0; }
+function showSection(section, btn) {
+  const toys = document.getElementById("toys");
+  const name = document.getElementById("nameSection");
+  document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+  btn.classList.add('active');
+  if (section === "toys") { toys.style.display = "grid"; name.style.display = "none"; }
+  if (section === "nameSection") { toys.style.display = "none"; name.style.display = "flex"; }
 }
